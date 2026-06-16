@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// For Vercel/production: change provider to "postgresql" and point DATABASE_URL
+// at Neon, Supabase, or Vercel Postgres. The seed file works on both.
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// NOTE: Enum values for Role, LocationStatus, PreventiveStatus, WorkOrderPriority,
+// and WorkOrderStatus are stored as strings — SQLite does not support enums.
+// The accepted values live in src/lib/types.ts and are validated at the action layer.
+
+model User {
+  id                       String   @id @default(cuid())
+  name                     String
+  email                    String   @unique
+  role                     String   // Role enum stored as string for sqlite portability
+  locationId               String?
+  technicianId             String?
+  location                 Location? @relation(fields: [locationId], references: [id])
+  technician               Technician? @relation(fields: [technicianId], references: [id])
+  submittedWorkOrders      WorkOrder[] @relation("submittedBy")
+  workOrderComments        WorkOrderComment[]
+  preventiveCompletions    PreventiveTaskCompletion[]
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+}
+
+model Location {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  region          String?
+  address         String?
+  city            String?
+  state           String?
+  status          String   @default("ACTIVE")
+  managerName     String?
+  managerEmail    String?
+  managerPhone    String?
+  users           User[]
+  preventiveTasks PreventiveTask[]
+  preventiveCompletions PreventiveTaskCompletion[]
+  workOrders      WorkOrder[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Technician {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  email           String?
+  phone           String?
+  active          Boolean  @default(true)
+  users           User[]
+  preventiveTasks PreventiveTask[]
+  workOrders      WorkOrder[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model MaintenanceCategory {
+  id                       String   @id @default(cuid())
+  name                     String   @unique
+  defaultFrequencyMonths   Int
+  description              String?
+  active                   Boolean  @default(true)
+  preventiveTasks          PreventiveTask[]
+  preventiveCompletions    PreventiveTaskCompletion[]
+}
+
+model PreventiveTask {
+  id                       String   @id @default(cuid())
+  locationId               String
+  categoryId               String
+  taskName                 String
+  description              String?
+  frequencyMonths          Int
+  lastServiceDate          DateTime?
+  nextServiceDate          DateTime?
+  assignedTechnicianId     String?
+  status                   String   @default("NOT_STARTED")
+  notes                    String?
+  location                 Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  category                 MaintenanceCategory @relation(fields: [categoryId], references: [id])
+  assignedTechnician       Technician? @relation(fields: [assignedTechnicianId], references: [id])
+  completions              PreventiveTaskCompletion[]
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  @@index([locationId])
+  @@index([categoryId])
+  @@index([nextServiceDate])
+}
+
+model PreventiveTaskCompletion {
+  id                       String   @id @default(cuid())
+  preventiveTaskId         String
+  locationId               String
+  categoryId               String
+  completedById            String?
+  completedAt              DateTime
+  notes                    String?
+  photoUrls                String?  // JSON array of URLs
+  nextServiceDateGenerated DateTime?
+  preventiveTask           PreventiveTask @relation(fields: [preventiveTaskId], references: [id], onDelete: Cascade)
+  location                 Location @relation(fields: [locationId], references: [id])
+  category                 MaintenanceCategory @relation(fields: [categoryId], references: [id])
+  completedBy              User? @relation(fields: [completedById], references: [id])
+  createdAt                DateTime @default(now())
+
+  @@index([locationId])
+  @@index([completedAt])
+}
+
+model WorkOrder {
+  id                   String   @id @default(cuid())
+  locationId           String
+  submittedByUserId    String?
+  title                String
+  description          String?
+  priority             String   @default("IMPORTANT")
+  status               String   @default("NEW")
+  category             String?
+  assignedTechnicianId String?
+  requestDate          DateTime @default(now())
+  dueDate              DateTime?
+  completedAt          DateTime?
+  progressNotes        String?
+  photoUrls            String?  // JSON array of URLs
+  location             Location @relation(fields: [locationId], references: [id])
+  submittedBy          User? @relation("submittedBy", fields: [submittedByUserId], references: [id])
+  assignedTechnician   Technician? @relation(fields: [assignedTechnicianId], references: [id])
+  comments             WorkOrderComment[]
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([locationId])
+  @@index([status])
+  @@index([priority])
+}
+
+model WorkOrderComment {
+  id          String   @id @default(cuid())
+  workOrderId String
+  userId      String?
+  comment     String
+  photoUrls   String?
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  user        User? @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@index([workOrderId])
+}
+
+model Vendor {
+  id          String   @id @default(cuid())
+  name        String
+  type        String?
+  contactName String?
+  phone       String?
+  email       String?
+  notes       String?
+  createdAt   DateTime @default(now())
+}
