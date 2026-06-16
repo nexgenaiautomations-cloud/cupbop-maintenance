@@ -9,6 +9,7 @@ import { LocationGroup } from "@/components/maintenance/location-group";
 import { WorkOrderLocationGroup } from "@/components/work-orders/location-group";
 import { EmptyState } from "@/components/ui/empty-state";
 import { KpiCard } from "@/components/ui/kpi-card";
+import { NewLocationLoginForm } from "@/components/accounts/new-location-login-form";
 
 export default async function LocationDetailPage({ params }: { params: Promise<{ name: string }> }) {
   const { name } = await params;
@@ -19,6 +20,11 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   const location = await prisma.location.findUnique({ where: { name: locationName } });
   if (!location) notFound();
   if (user.role === "LOCATION_MANAGER" && user.locationId !== location.id) notFound();
+
+  const existingManager = await prisma.user.findFirst({
+    where: { locationId: location.id, role: "LOCATION_MANAGER" },
+    select: { name: true, email: true, username: true },
+  });
 
   const [openOrders, completedOrders, pmTasks] = await Promise.all([
     prisma.workOrder.findMany({
@@ -70,6 +76,17 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
         <KpiCard label="PM Overdue" value={overdue} icon={Building2} tone={overdue > 0 ? "bad" : "good"} />
         <KpiCard label="PM Due Soon" value={dueSoon} icon={Building2} tone={dueSoon > 0 ? "warn" : "neutral"} />
       </div>
+
+      {user.role !== "LOCATION_MANAGER" ? (
+        <section className="space-y-3">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Store Manager Access</h2>
+          <NewLocationLoginForm
+            locationId={location.id}
+            locationName={location.name}
+            existingManager={existingManager}
+          />
+        </section>
+      ) : null}
 
       <section className="space-y-3">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Open Work Orders</h2>

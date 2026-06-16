@@ -1,24 +1,7 @@
 import { loginAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
-import { ShieldCheck, Store, ArrowRight, KeyRound } from "lucide-react";
-
-const DEMO_ACCOUNTS = [
-  {
-    label: "Maintenance Manager",
-    sub: "Full operator · all locations, KPIs, reports, technician queue",
-    email: "admin@cupbopmaintenance.com",
-    icon: ShieldCheck,
-    accent: "bg-cupbop-red text-white",
-  },
-  {
-    label: "Location Manager (Provo)",
-    sub: "Store portal · submit work orders",
-    email: "provo@cupbopmaintenance.com",
-    icon: Store,
-    accent: "bg-cupbop-black text-white",
-  },
-];
+import { KeyRound } from "lucide-react";
 
 export default async function LoginPage({
   searchParams,
@@ -46,7 +29,7 @@ export default async function LoginPage({
           </p>
         </div>
         <div className="text-xs text-white/60">
-          <p>Demo build · Cupbop Maintenance Command Center</p>
+          <p>Cupbop Maintenance Command Center</p>
         </div>
         <div className="pointer-events-none absolute -right-32 -bottom-32 h-96 w-96 rounded-full bg-cupbop-red/30 blur-3xl" />
         <div className="pointer-events-none absolute right-10 top-10 h-48 w-48 rounded-full bg-cupbop-yellow/20 blur-3xl" />
@@ -55,21 +38,21 @@ export default async function LoginPage({
         <div className="w-full max-w-md">
           <h2 className="text-2xl font-semibold tracking-tight">Sign in</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Use your username/password — or click a demo account below for instant access.
+            Enter your username and password to continue.
           </p>
 
-          <form action={loginAction} className="mt-6 space-y-3 rounded-xl border bg-white p-5 shadow-sm">
-            <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              <KeyRound className="h-3.5 w-3.5" /> Username &amp; password
+          <form action={loginAction} className="mt-6 space-y-4 rounded-xl border bg-white p-6 shadow-sm">
+            <div className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <KeyRound className="h-3.5 w-3.5" /> Account login
             </div>
             <div>
-              <Label htmlFor="identifier">Username or email</Label>
+              <Label htmlFor="identifier">Username</Label>
               <Input
                 id="identifier"
                 name="identifier"
                 required
                 autoComplete="username"
-                placeholder="RCB123"
+                placeholder="username"
               />
             </div>
             <div>
@@ -78,6 +61,7 @@ export default async function LoginPage({
                 id="password"
                 name="password"
                 type="password"
+                required
                 autoComplete="current-password"
                 placeholder="••••••••"
               />
@@ -91,41 +75,9 @@ export default async function LoginPage({
               Sign in
             </Button>
             <p className="text-[11px] text-muted-foreground">
-              <strong className="text-foreground">Rodney&apos;s account:</strong> username <code className="rounded bg-muted px-1">RCB123</code> · password <code className="rounded bg-muted px-1">RCB123</code>
+              Don&apos;t have an account? Ask your maintenance manager to set one up for you.
             </p>
           </form>
-
-          <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
-            <div className="h-px flex-1 bg-border" />
-            OR USE A DEMO ACCOUNT
-            <div className="h-px flex-1 bg-border" />
-          </div>
-
-          <div className="space-y-2">
-            {DEMO_ACCOUNTS.map((d) => {
-              const Icon = d.icon;
-              return (
-                <form key={d.email} action={loginAction}>
-                  <input type="hidden" name="identifier" value={d.email} />
-                  <button
-                    type="submit"
-                    className="group flex w-full cursor-pointer items-center justify-between rounded-xl border bg-white p-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-cupbop-red hover:shadow-md"
-                  >
-                    <span className="flex items-center gap-3">
-                      <span className={`flex h-10 w-10 items-center justify-center rounded-lg ${d.accent}`}>
-                        <Icon className="h-5 w-5" />
-                      </span>
-                      <span className="flex flex-col leading-tight">
-                        <span className="text-sm font-semibold">Sign in as {d.label}</span>
-                        <span className="text-xs text-muted-foreground">{d.sub}</span>
-                      </span>
-                    </span>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-cupbop-red" />
-                  </button>
-                </form>
-              );
-            })}
-          </div>
         </div>
       </section>
     </main>

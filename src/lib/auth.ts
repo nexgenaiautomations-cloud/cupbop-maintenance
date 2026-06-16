@@ -75,11 +75,10 @@ export async function login(
   });
   if (!user) return { error: "not_found" };
 
-  if (user.passwordHash) {
-    if (!password) return { error: "password_required" };
-    const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) return { error: "bad_password" };
-  }
+  if (!user.passwordHash) return { error: "not_found" };
+  if (!password) return { error: "password_required" };
+  const ok = await bcrypt.compare(password, user.passwordHash);
+  if (!ok) return { error: "bad_password" };
 
   await setSession(user.id);
   return { user: toSessionUser(user) };
