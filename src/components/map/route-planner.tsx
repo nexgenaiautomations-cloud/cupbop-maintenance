@@ -285,7 +285,7 @@ export function RoutePlanner({
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
-      <div className="card-shell relative overflow-hidden">
+      <div className="card-shell relative isolate overflow-hidden">
         <div ref={mapDivRef} className="h-[520px] w-full rounded-xl lg:h-[680px]" />
       </div>
       <div className="space-y-4">
