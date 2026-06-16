@@ -14,3 +14,5 @@ prisma/dev.db-journal
 prisma/migrations
 
 .DS_Store
+
+.vercel

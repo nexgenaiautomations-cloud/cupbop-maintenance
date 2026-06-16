@@ -5,7 +5,7 @@ generator client {
 // For Vercel/production: change provider to "postgresql" and point DATABASE_URL
 // at Neon, Supabase, or Vercel Postgres. The seed file works on both.
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
