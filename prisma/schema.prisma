@@ -38,6 +38,8 @@ model Location {
   address         String?
   city            String?
   state           String?
+  latitude        Float?
+  longitude       Float?
   status          String   @default("ACTIVE")
   managerName     String?
   managerEmail    String?

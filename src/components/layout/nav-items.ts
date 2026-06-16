@@ -11,6 +11,7 @@ import {
   ClipboardList,
   Plus,
   CalendarDays,
+  Map as MapIcon,
 } from "lucide-react";
 import type { Role } from "@/lib/types";
 
@@ -26,6 +27,7 @@ const OPERATOR_NAV: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/technician", label: "My Work", icon: ClipboardList },
   { href: "/planner", label: "Daily & Weekly", icon: CalendarDays },
+  { href: "/map", label: "Map & Routes", icon: MapIcon },
   { href: "/work-orders", label: "Work Orders", icon: Wrench },
   { href: "/work-orders/new", label: "Create Work Order", icon: Plus },
   { href: "/maintenance", label: "Preventive Maintenance", icon: CalendarCheck },
