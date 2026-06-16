@@ -4,6 +4,7 @@ node_modules
 dist
 out
 *.tsbuildinfo
+.playwright-mcp
 
 .env
 .env*.local
