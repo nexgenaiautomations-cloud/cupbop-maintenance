@@ -3,11 +3,20 @@
 import { Bell, Search, ChevronDown, LogOut } from "lucide-react";
 import { useState } from "react";
 import { logoutAction } from "@/app/actions/auth";
+import { MobileNav } from "./mobile-nav";
+import type { Role } from "@/lib/types";
 
-export function TopBar({ user }: { user: { name: string; email: string; role: string } }) {
+export function TopBar({ user }: { user: { name: string; email: string; role: Role } }) {
   const [open, setOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b bg-white/80 px-4 backdrop-blur md:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b bg-white/80 px-4 backdrop-blur md:px-6">
+      <MobileNav role={user.role} />
+      <div className="flex items-center gap-2 md:hidden">
+        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-cupbop-red text-white text-sm font-bold">
+          C
+        </div>
+        <span className="text-sm font-semibold">Cupbop</span>
+      </div>
       <div className="hidden flex-1 md:flex">
         <div className="relative w-full max-w-md">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
