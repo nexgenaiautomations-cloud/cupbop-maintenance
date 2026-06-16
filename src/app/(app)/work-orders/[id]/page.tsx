@@ -30,7 +30,6 @@ export default async function WorkOrderDetail({ params }: { params: Promise<{ id
   });
   if (!wo) notFound();
   if (user.role === "LOCATION_MANAGER" && wo.locationId !== user.locationId) notFound();
-  if (user.role === "TECHNICIAN" && wo.assignedTechnicianId !== user.technicianId) notFound();
 
   const technicians = await prisma.technician.findMany({ where: { active: true }, orderBy: { name: "asc" } });
   const isReadonly = user.role === "LOCATION_MANAGER";

@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { range } from "@/lib/dates";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { KpiCard } from "@/components/ui/kpi-card";
-import { BarChart3, CalendarRange, CheckCircle2, Gauge } from "lucide-react";
+import { BarChart3, CalendarRange, CheckCircle2, Gauge, Download } from "lucide-react";
 import { getAverageCompletionTime, getOnTimeCompliance, getWorkOrdersByLocation } from "@/lib/metrics";
 
 const COMPLETION_LABEL: Record<string, string> = {
@@ -117,10 +117,35 @@ export default async function ReportsPage() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle className="text-sm">Export</CardTitle></CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          CSV export endpoints are wired at <code className="rounded bg-muted px-1.5 py-0.5">/api/export/work-orders</code> and{" "}
-          <code className="rounded bg-muted px-1.5 py-0.5">/api/export/maintenance</code>. Use them with date range query params.
+        <CardHeader>
+          <CardTitle>Export &amp; Share with Owners</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <a
+              href="/api/export/work-orders"
+              className="group flex items-center justify-between rounded-lg border bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-cupbop-red hover:shadow-md"
+            >
+              <div>
+                <div className="text-sm font-semibold">Work Orders CSV</div>
+                <div className="text-xs text-muted-foreground">All requests · status · technician · dates</div>
+              </div>
+              <Download className="h-5 w-5 text-cupbop-red transition-transform group-hover:translate-y-0.5" />
+            </a>
+            <a
+              href="/api/export/maintenance"
+              className="group flex items-center justify-between rounded-lg border bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-cupbop-red hover:shadow-md"
+            >
+              <div>
+                <div className="text-sm font-semibold">Preventive Maintenance CSV</div>
+                <div className="text-xs text-muted-foreground">Last service · next service · status per location</div>
+              </div>
+              <Download className="h-5 w-5 text-cupbop-red transition-transform group-hover:translate-y-0.5" />
+            </a>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Files open directly in Excel, Google Sheets, or any spreadsheet app — perfect for sharing with ownership.
+          </p>
         </CardContent>
       </Card>
     </div>

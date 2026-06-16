@@ -53,7 +53,7 @@ export async function completePreventiveTaskAction(formData: FormData) {
 export async function assignPreventiveTaskAction(formData: FormData) {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  if (user.role !== "ADMIN") throw new Error("Forbidden");
+  if (user.role === "LOCATION_MANAGER") throw new Error("Forbidden");
   const taskId = String(formData.get("taskId") ?? "");
   const technicianId = String(formData.get("technicianId") ?? "");
   await prisma.preventiveTask.update({

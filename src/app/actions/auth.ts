@@ -1,17 +1,24 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { clearSession, loginByEmail } from "@/lib/auth";
+import { clearSession, login } from "@/lib/auth";
 
 export async function loginAction(formData: FormData) {
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  const user = await loginByEmail(email);
-  if (!user) {
-    redirect(`/login?error=${encodeURIComponent("No account found for that email.")}`);
+  const identifier = String(formData.get("identifier") ?? formData.get("email") ?? "").trim();
+  const password = formData.get("password") ? String(formData.get("password")) : undefined;
+
+  const result = await login(identifier, password);
+  if ("error" in result) {
+    const messages: Record<string, string> = {
+      not_found: "No account found for that email or username.",
+      bad_password: "Incorrect password.",
+      password_required: "Password required for this account.",
+    };
+    redirect(`/login?error=${encodeURIComponent(messages[result.error] ?? "Sign in failed.")}`);
   }
-  if (user.role === "ADMIN") redirect("/dashboard");
-  if (user.role === "TECHNICIAN") redirect("/technician");
-  redirect("/location");
+  const user = result.user;
+  if (user.role === "LOCATION_MANAGER") redirect("/location");
+  redirect("/dashboard");
 }
 
 export async function logoutAction() {

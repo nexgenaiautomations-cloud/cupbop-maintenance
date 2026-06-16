@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Plus, ClipboardList, Filter, LayoutGrid, ListOrdered } from "lucide-react";
+import { ExportButton } from "@/components/ui/export-button";
 import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,7 +50,7 @@ export default async function WorkOrdersPage({ searchParams }: { searchParams: S
     where.priority = "URGENT";
     where.status = { notIn: ["COMPLETE", "CANCELLED"] };
   }
-  if (user.role === "TECHNICIAN" && user.technicianId) where.assignedTechnicianId = user.technicianId;
+  // Operators (admin + technician) see all; location managers see only their store.
   if (user.role === "LOCATION_MANAGER" && user.locationId) where.locationId = user.locationId;
 
   const orders = await prisma.workOrder.findMany({
@@ -99,11 +100,16 @@ export default async function WorkOrdersPage({ searchParams }: { searchParams: S
             {orders.length} matching across {grouped.length} locations · sorted urgent-first then by store
           </p>
         </div>
-        {user.role !== "LOCATION_MANAGER" ? (
-          <Link href="/work-orders/new">
-            <Button><Plus className="h-4 w-4" /> New Work Order</Button>
-          </Link>
-        ) : null}
+        <div className="flex flex-wrap gap-2">
+          {user.role !== "LOCATION_MANAGER" ? (
+            <ExportButton href="/api/export/work-orders" label="Export CSV" />
+          ) : null}
+          {user.role !== "LOCATION_MANAGER" ? (
+            <Link href="/work-orders/new">
+              <Button><Plus className="h-4 w-4" /> New Work Order</Button>
+            </Link>
+          ) : null}
+        </div>
       </div>
 
       <Card>
@@ -136,7 +142,7 @@ export default async function WorkOrdersPage({ searchParams }: { searchParams: S
               placeholder="Search title/description"
               className="field-input"
             />
-            {user.role === "ADMIN" ? (
+            {user.role !== "LOCATION_MANAGER" ? (
               <select name="location" defaultValue={sp.location ?? "all"} className="field-input">
                 <option value="all">All Locations</option>
                 {locations.map((l) => (
@@ -156,7 +162,7 @@ export default async function WorkOrdersPage({ searchParams }: { searchParams: S
                 <option key={s} value={s}>{s.replace("_", " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())}</option>
               ))}
             </select>
-            {user.role === "ADMIN" ? (
+            {user.role !== "LOCATION_MANAGER" ? (
               <select name="technician" defaultValue={sp.technician ?? "all"} className="field-input">
                 <option value="all">All Technicians</option>
                 {technicians.map((t) => (

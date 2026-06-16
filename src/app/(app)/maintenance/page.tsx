@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CalendarCheck, Filter, CheckCircle2, LayoutGrid, ListOrdered } from "lucide-react";
+import { ExportButton } from "@/components/ui/export-button";
 import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth";
 import { addDays } from "date-fns";
@@ -37,7 +38,7 @@ export default async function MaintenancePage({ searchParams }: { searchParams: 
   if (sp.category && sp.category !== "all") where.categoryId = sp.category;
   if (sp.status && sp.status !== "all") where.status = sp.status;
   if (sp.technician && sp.technician !== "all") where.assignedTechnicianId = sp.technician;
-  if (user.role === "TECHNICIAN" && user.technicianId) where.assignedTechnicianId = user.technicianId;
+  // Operators see all; location managers see only their store.
   if (user.role === "LOCATION_MANAGER" && user.locationId) where.locationId = user.locationId;
 
   if (sp.scope === "overdue") where.nextServiceDate = { lt: new Date() };
@@ -92,6 +93,9 @@ export default async function MaintenancePage({ searchParams }: { searchParams: 
           <Link href="/maintenance?scope=week"><Button variant="outline" size="sm">Due This Week</Button></Link>
           <Link href="/maintenance?scope=month"><Button variant="outline" size="sm">Due This Month</Button></Link>
           <Link href="/maintenance"><Button variant="ghost" size="sm">All</Button></Link>
+          {user.role !== "LOCATION_MANAGER" ? (
+            <ExportButton href="/api/export/maintenance" label="Export CSV" />
+          ) : null}
         </div>
       </div>
 
@@ -119,7 +123,7 @@ export default async function MaintenancePage({ searchParams }: { searchParams: 
         <CardContent>
           <form method="get" className="grid grid-cols-1 gap-3 md:grid-cols-5">
             <input type="hidden" name="view" value={view} />
-            {user.role === "ADMIN" ? (
+            {user.role !== "LOCATION_MANAGER" ? (
               <select name="location" defaultValue={sp.location ?? "all"} className="field-input">
                 <option value="all">All Locations</option>
                 {locations.map((l) => (<option key={l.id} value={l.id}>{l.name}</option>))}
@@ -137,7 +141,7 @@ export default async function MaintenancePage({ searchParams }: { searchParams: 
               <option value="COMPLETED">Completed</option>
               <option value="NOT_STARTED">Not Started</option>
             </select>
-            {user.role === "ADMIN" ? (
+            {user.role !== "LOCATION_MANAGER" ? (
               <select name="technician" defaultValue={sp.technician ?? "all"} className="field-input">
                 <option value="all">All Technicians</option>
                 {technicians.map((t) => (<option key={t.id} value={t.id}>{t.name}</option>))}

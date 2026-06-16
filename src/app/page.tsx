@@ -4,7 +4,6 @@ import { getSessionUser } from "@/lib/auth";
 export default async function Home() {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  if (user.role === "ADMIN") redirect("/dashboard");
-  if (user.role === "TECHNICIAN") redirect("/technician");
-  redirect("/location");
+  if (user.role === "LOCATION_MANAGER") redirect("/location");
+  redirect("/dashboard");
 }

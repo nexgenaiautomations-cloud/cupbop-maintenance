@@ -17,6 +17,8 @@ model User {
   id                       String   @id @default(cuid())
   name                     String
   email                    String   @unique
+  username                 String?  @unique
+  passwordHash             String?
   role                     String   // Role enum stored as string for sqlite portability
   locationId               String?
   technicianId             String?

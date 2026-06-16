@@ -14,13 +14,7 @@ import { formatDate, humanDaysUntil, range } from "@/lib/dates";
 export default async function TechnicianPortal() {
   const user = await getSessionUser();
   if (!user) redirect("/login");
-  if (user.role !== "TECHNICIAN" || !user.technicianId) {
-    if (user.role === "ADMIN") {
-      // Admins can see this view too — pick first technician
-    } else {
-      redirect("/");
-    }
-  }
+  if (user.role === "LOCATION_MANAGER") redirect("/location");
 
   const techId = user.technicianId;
   const week = range("week");
