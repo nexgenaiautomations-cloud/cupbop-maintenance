@@ -1,0 +1,40 @@
+{
+  "name": "Cupbop Maintenance Command Center",
+  "short_name": "Cupbop Maint",
+  "description": "Preventive maintenance and work order tracking for Cupbop locations.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f0f10",
+  "theme_color": "#e11d2a",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "/dashboard"
+    },
+    {
+      "name": "Work Orders",
+      "url": "/work-orders"
+    },
+    {
+      "name": "Technician Queue",
+      "url": "/technician"
+    }
+  ]
+}

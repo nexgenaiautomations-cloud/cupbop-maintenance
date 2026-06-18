@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell, Building2, HardHat, ListChecks } from "lucide-react";
+import { InstallAppCard } from "@/components/settings/install-app-card";
 
 export default async function SettingsPage() {
   const [locations, technicians, categories] = await Promise.all([
@@ -77,6 +78,8 @@ export default async function SettingsPage() {
           </div>
         </CardContent>
       </Card>
+
+      <InstallAppCard />
 
       <Card>
         <CardHeader className="flex flex-row items-center gap-2">
